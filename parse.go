@@ -2,7 +2,6 @@ package main
 
 import (
   "fmt"
-  "io"
   "os"
   "encoding/csv"
   "log"
@@ -41,28 +40,25 @@ func createUserList(data [][]string) []UserRecord {
 
 func main() {
   // open the file
-  f, err := os.Open("emails.csv")
+  file, err := os.Open("emails.csv")
   if err != nil {
     log.Fatal(err)
   }
 
-  // close the file after the program has run
-  defer f.Close()
+  // close file after program runs
+  defer file.Close()
 
-  // read csv values using csv.Reader
-  csvReader := csv.NewReader(f)
-  for {
-    record, err := csvReader.Read()
-    if err == io.EOF {
-      break
-    }
-    if err != nil {
-      log.Fatal(err)
-    }
-
-    // print the user list array - If the value is a struct, the %+v variant will include the struct’s field names.
-    fmt.Printf("%+v\n", record)
+  // read values using csv.Reader
+  csvReader := csv.NewReader(file)
+  data, err := csvReader.ReadAll()
+  if err != nil {
+    log.Fatal(err) 
   }
+
+  // convert "record" to array of structs (object)
+  userList := createUserList(data)
+
+  fmt.Printf("%+v\n", userList)
 
 }
 
